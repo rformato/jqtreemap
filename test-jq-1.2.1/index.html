@@ -1,0 +1,93 @@
+<!<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html>
+  <head>
+	  <title>Treemap</title>
+	  <script src="jquery-1.2.1.js" type="text/javascript"></script>
+	  <script src="../treemap-1.0.3.js" type="text/javascript"></script>
+	  <script type="text/javascript">
+	  	jQuery(function(){
+	  		jQuery("#generate_data").click(gen_table);
+	  		jQuery("#generate_data_user").click(gen_table_user);
+	  		jQuery("#generate_data_hier").click(gen_table_hier);
+			});
+			
+			function gen_data(num,max) {
+				var datas = [];
+				for(var i=1;i<=num;i++) { 
+					var value = Math.round(Math.random()*max);
+					datas.push(value);	
+				}
+				datas.sort(function(a,b){return b-a;});
+				return datas;			
+			}
+
+			function gen_table() {
+				jQuery("#treemap").remove();
+				var t = jQuery("<table>").attr({"id":"treemap","border":"1"});
+				var datas = gen_data(jQuery("#num_el").val(),jQuery("#max_value").val());
+				var t_content = "";
+				jQuery.each(datas,function(i,n){
+					t_content += "<tr><td>"+n+"</td></tr>";
+				});
+				t.html(t_content).insertBefore("#target");
+				t.treemap(600,600,{dataCell:0,target:"#target"}).css("float","left");
+			}
+			
+			function getDataFromList(datas) {
+				var data = [];
+				jQuery.each(datas,function(i,n){
+					var row = [n,parseFloat(n)];
+					data.push(row);
+				});
+				return data;
+			}
+			
+			function getHierData(datas) {
+				var data = [];
+				var hier = getDataFromList(datas);
+				jQuery.each(datas,function(i,n){
+					var row = [n,hier];
+					data.push(row);
+				});
+				return data;			
+			}
+			
+			function gen_table_user() {
+				jQuery("#treemap,.treemapView").remove();
+				var datas = gen_data(jQuery("#num_el").val(),jQuery("#max_value").val());
+				jQuery("#target").treemap(600,600,{getData:function(){return getDataFromList(datas)}});
+			}
+			
+			function gen_table_hier() {
+				jQuery("#treemap,.treemapView").remove();
+				var datas = gen_data(Math.round(Math.sqrt(jQuery("#num_el").val())),jQuery("#max_value").val());
+				jQuery("#target").treemap(600,600,{getData:function(){return getHierData(datas);}});
+				jQuery("#target div.treemapCell").hover(function(){jQuery(this).addClass("selected")},function(){jQuery(this).removeClass("selected")});
+			}
+						
+	  </script>
+	  <style type="text/css">
+	  	strong {display:block;float:left;width:150px}
+	  	strong, input, button {margin-bottom:10px}
+	  	#target>.treemapView {margin-left:100px}
+	  	.treemapView {background-color:red}
+	  	.treemapSquare {}
+	  	.treemapCell {}
+	  	.treemapCell.selected, .treemapCell.selected .treemapCell.selected {background-color:green}
+	  	.treemapCell.selected .treemapCell {background-color:yellow}
+	  	.treemapHead {background-color:orange;font-weight:bold}
+	  </style>
+  </head>
+  <body>
+		<strong>Number of elements</strong>
+		<input type="text" id="num_el"/><br />
+		<strong>Max value</strong>
+		<input type="text" id="max_value" /><br />
+		<button id="generate_data">Generate data and create the treemap from a table</button><br />
+		<button id="generate_data_user">Generate data and create the treemap from a user provided data model</button><br />
+		<button id="generate_data_hier">Generate hierarchical data and create the treemap from a user provided data model</button><br />
+		<a href="http://www.jquery.info/spip.php?article40">Back to the article [en]</a><br />
+		<a href="http://www.jquery.info/spip.php?article39">Torna all'articolo [it]</a>
+		<div id="target"></div>
+  </body>
+</html>
