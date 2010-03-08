@@ -27,10 +27,10 @@
 				var datas = gen_data(jQuery("#num_el").val(),jQuery("#max_value").val());
 				var t_content = "";
 				jQuery.each(datas,function(i,n){
-					t_content += "<tr><td>"+n+"</td></tr>";
+					t_content += "<tr><td>"+n+"</td><td>"+n+"</td><td>"+(n%2?"dispari":"pari")+"</td></tr>";
 				});
 				t.html(t_content).insertBefore("#target");
-				t.treemap(600,600,{dataCell:0,target:"#target"}).css("float","left");
+				t.treemap(600,600,{dataCell:0,target:"#target",colorDiscreteVal:{pari:"#FF0000",dispari:"#00FF00"},legend:true,labelCallback:function(){}}).css("float","left");
 			}
 			
 			function getDataFromList(datas) {

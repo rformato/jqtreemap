@@ -23,7 +23,15 @@ $.fn.treemap = function(w,h,options) {
 		if($.fn.treemap.caller!=treemap.layoutRow) {
 			options.minColorValue = Number.POSITIVE_INFINITY;
 			options.maxColorValue = Number.NEGATIVE_INFINITY;
-			if(!options.colorDiscreteVal) options.colorDiscreteVal = {num:0};
+			if(!options.colorDiscreteVal) 
+				options.colorDiscreteVal = {num:0};
+			else {
+				var num = 0;
+				$.each(options.colorDiscreteVal,function(){
+					num++;
+				});
+				options.colorDiscreteVal.num = num;
+			}
 			treemap.normalizeValues(data,options);
 			options.colorDiscrete = options.minColorValue == Number.POSITIVE_INFINITY;
 			options.rangeColorValue = options.maxColorValue-options.minColorValue;
@@ -39,7 +47,7 @@ $.fn.treemap = function(w,h,options) {
 		
 		options.target = or_target || el;
 		options.numSquare = 0;
-		   
+		
 		treemap.render(data,h,w,options);
 		
 		if($.fn.treemap.caller!=treemap.layoutRow && options.legend) {
@@ -57,8 +65,8 @@ $.fn.treemap = function(w,h,options) {
 
 $.fn.treemapClone = function() {
 	return this.pushStack( jQuery.map( this, function(a){
- 		return a.outerHTML ? jQuery(a.outerHTML)[0] : a.cloneNode(true);
- 	})); 
+		return a.outerHTML ? jQuery(a.outerHTML)[0] : a.cloneNode(true);
+	})); 
 }
 
 $.fn.treemapAppend = function(arguments) {
@@ -105,7 +113,7 @@ var treemap = {
 		options.viewAreaCoeff = w*h/s;
 		options.view = treemap.emptyView.clone().css({'width':w,'height':h});
 		options.content = []; 
-    treemap.squarify(data,[],h,true,options);
+		treemap.squarify(data,[],h,true,options);
 		options.view.treemapAppend(options.content);
 		$(options.target).empty().treemapAppend(options.view);
 	},
@@ -164,7 +172,7 @@ var treemap = {
 		for(var i=0;i<=rl;i++) {
 			var n = row[i],hier = n[1].constructor == Array, head = [], val = hier?treemap.getValue(n[1]):n[1];
 			var cell = treemap.emptyCell.treemapClone();
-			if(!hier) cell.append(n[0])[0].title = cell.text()+' ('+val+')'; 
+			if(!hier) cell.append(options.labelCallback?options.labelCallback(n):n[0])[0].title = options.titleCallback?options.titleCallback(n):cell.text()+' ('+val+')'; 
 			var lastCell = i==rl;
 			var fixedDim = rowDim, varDim = lastCell ? w-sum : Math.round(val/h);
 			if(varDim<=0) break;
@@ -212,8 +220,8 @@ var treemap = {
 			
 			//cell.css(cellStyles);
 			var cellstyle = cell[0].style;
-      for(var prop in cellStyles)
-        cellstyle[prop] = cellStyles[prop];
+			for(var prop in cellStyles)
+				cellstyle[prop] = cellStyles[prop];
 
 			cells.push(cell[0]);
 		}
@@ -241,6 +249,8 @@ var treemap = {
 	getColor : function(val,options) {
 		var colorCode;
 		if(options.colorDiscrete) {
+			if(isNaN(options.colorDiscreteVal))
+				return options.colorDiscreteVal[val];
 			colorCode = options.colorDiscreteVal[val]/options.colorDiscreteVal.num;
 		} else {
 			colorCode = (val-options.minColorValue)/options.rangeColorValue;
@@ -275,10 +285,11 @@ var treemap = {
 		var bar = $("<div>").css({width:20,height:h-2,border:"1px solid"});
 		options.view.css({'float':'left','marginRight':20});
 		if(options.colorDiscrete) {
+			var j = 1;
 			$.each(options.colorDiscreteVal,function(i,n){
 				if(i!='num') {
+					var height = isNaN(i)?j++*h/options.colorDiscreteVal.num:Math.round(n*h/options.colorDiscreteVal.num);
 					i = options.descriptionCallback ? options.descriptionCallback(i):i;
-					var height = Math.round(n*h/options.colorDiscreteVal.num);
 					var bar = $("<div>").css({height:20,width:20,backgroundColor:treemap.getColor(i,options),position:'absolute',bottom:height});
 					var desc = treemap.emptyLegendDescr.clone().text(i).css('bottom',height);
 					l.append(bar).append(desc);
