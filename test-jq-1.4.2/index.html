@@ -2,6 +2,10 @@
 <html>
   <head>
 	  <title>Treemap</title>
+	  <style type="text/css">
+	  	.pari {background-color: #FF0000;}
+	  	.dispari {background-color: #00FF00;}
+	  </style>
 	  <script src="jquery-1.4.2.js" type="text/javascript"></script>
 	  <script src="../treemap-1.1.js" type="text/javascript"></script>
 	  <script type="text/javascript">
@@ -30,7 +34,7 @@
 					t_content += "<tr><td>"+n+"</td><td>"+n+"</td><td>"+(n%2?"dispari":"pari")+"</td></tr>";
 				});
 				t.html(t_content).insertBefore("#target");
-				t.treemap(600,600,{dataCell:0,target:"#target",colorDiscreteVal:{pari:"#FF0000",dispari:"#00FF00"},legend:true,labelCallback:function(){}}).css("float","left");
+				t.treemap(600,600,{dataCell:0,target:"#target",colorDiscreteValClass:true,colorDiscreteVal:{pari:"pari",dispari:"dispari"},legend:true,labelCallback:function(){}}).css("float","left");
 			}
 			
 			function getDataFromList(datas) {
