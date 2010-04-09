@@ -255,7 +255,7 @@ var treemap = {
 	getColor : function(val,options) {
 		var colorCode;
 		if(options.colorDiscrete) {
-			if(isNaN(options.colorDiscreteVal))
+			if(isNaN(options.colorDiscreteVal[val]))
 				return options.colorDiscreteVal[val];
 			colorCode = options.colorDiscreteVal[val]/options.colorDiscreteVal.num;
 		} else {
@@ -294,7 +294,7 @@ var treemap = {
 			var j = 1;
 			$.each(options.colorDiscreteVal,function(i,n){
 				if(i!='num') {
-					var height = isNaN(i)?j++*h/options.colorDiscreteVal.num:Math.round(n*h/options.colorDiscreteVal.num);
+					var height = isNaN(i)?j++*h/(options.colorDiscreteVal.num+1):Math.round(n*h/options.colorDiscreteVal.num);
 					i = options.descriptionCallback ? options.descriptionCallback(i):i;
 					var bar = $("<div>").css({height:20,width:20,backgroundColor:treemap.getColor(i,options),position:'absolute',bottom:height});
 					var color = treemap.getColor(i,options);
