@@ -40,7 +40,7 @@
 			function getDataFromList(datas) {
 				var data = [];
 				jQuery.each(datas,function(i,n){
-					var row = [n,parseFloat(n)];
+					var row = {label:n,data:parseFloat(n)};
 					data.push(row);
 				});
 				return data;
@@ -50,7 +50,7 @@
 				var data = [];
 				var hier = getDataFromList(datas);
 				jQuery.each(datas,function(i,n){
-					var row = [n,hier];
+					var row = {label:n,data:hier};
 					data.push(row);
 				});
 				return data;			
